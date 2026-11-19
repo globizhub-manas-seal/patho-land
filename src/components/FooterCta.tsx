@@ -31,7 +31,9 @@ export default function FooterCta() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
               <a
-                href="#demo"
+                href={`https://wa.me/918402010207?text=${encodeURIComponent('Hi, I want to book a live demo of Patholab Cloud for my lab.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white/10 hover:bg-white/20 text-white border border-slate-700 px-8 py-4 rounded-full font-bold text-lg transition-all backdrop-blur-sm flex items-center justify-center gap-2"
               >
                 <Play className="w-5 h-5 fill-white" />

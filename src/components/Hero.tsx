@@ -92,8 +92,9 @@ export default function Hero({
 
           {/* Left: Content (5 of 12 columns for balanced text + large video) */}
           <div className="lg:col-span-5 text-center lg:text-left mb-14 lg:mb-0">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/80 text-emerald-700 font-medium text-sm mb-6 border border-emerald-200 shadow-sm">
-              <Zap className="w-4 h-4 text-emerald-600" /> Next-Gen LIMS Ecosystem
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/90 text-emerald-800 font-semibold text-xs sm:text-sm mb-6 border border-emerald-200 shadow-sm">
+              <Zap className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <span>India&apos;s First Pay-As-You-Go LIMS • Just ₹2.5 / Patient</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-[#0B1120] leading-[1.12] tracking-tight mb-6">
@@ -106,7 +107,7 @@ export default function Hero({
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Transform your diagnostic lab with a 100% cloud-based ecosystem. Zero server costs, zero maintenance, and infinite scalability across all your collection centers.
+              Transform your diagnostic lab with India&apos;s first 100% <strong className="text-slate-900 font-bold"> Pay-As-You-Go </strong> cloud ecosystem at just <strong className="text-slate-900 font-bold">₹2.5 per patient registration</strong>. Zero server costs, zero maintenance, and infinite scalability across all your collection centers.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -118,19 +119,21 @@ export default function Hero({
                 <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
               </a>
               <a
-                href="#demo"
+                href={`https://wa.me/918402010207?text=${encodeURIComponent('Hi, I want to book a live demo of Patholab Cloud for my lab.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white hover:bg-slate-50 text-[#0B1120] border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 hover:border-slate-300 shadow-sm"
               >
                 <Play className="w-5 h-5 fill-slate-800" /> Book a Demo
               </a>
             </div>
 
-            <div className="mt-8 flex items-center justify-center lg:justify-start gap-6 text-sm font-medium text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Unlimited Branches
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-5 text-sm font-medium text-slate-500">
+              <span className="flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/70">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> ₹2.5 / Patient Registration
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Unlimited Users
+                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Unlimited Branches
               </span>
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Zero AMC Forever

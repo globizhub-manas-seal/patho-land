@@ -4,7 +4,6 @@ import { Lock, Shield, CheckCircle2 } from 'lucide-react';
 export default function Security() {
   const securityItems = [
     "256-bit AES Encryption for Data at Rest & in Transit",
-    "Automated Hourly Offsite Backups with 99.99% Uptime",
     "HIPAA & NABL Compliance Ready Guidelines",
     "Granular Role-based Access, OTP Verification & Audit Logs"
   ];

@@ -40,9 +40,9 @@ export const platformFeatures = [
     gradient: "from-blue-500/5 via-sky-500/5 to-transparent",
     badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
     title: "LIMS & Pathology",
-    desc: "Advanced report templates, barcode support, delta checks, abnormal flagging, and smart AI result predictions.",
-    microPill: "Δ Delta Check • Barcode",
-    highlightStat: "99.8% AI Result Accuracy",
+    desc: "Custom NABL report templates, barcode support, and automated abnormal flagging.",
+    microPill: "NABL Templates • Barcode",
+    highlightStat: "NABL Format Ready",
     highlights: ["Custom NABL templates", "Auto abnormal flags", "Barcode scanner sync"]
   },
   {
@@ -71,7 +71,7 @@ export const platformFeatures = [
     desc: "Instant GST invoicing, automated agency commissions, doctor referral tracking, and robust financial audits.",
     microPill: "Instant GST • Agency Audit",
     highlightStat: "100% Tax Compliant",
-    highlights: ["Auto GST calculation", "Agency commission ledger", "Instant split invoices"]
+    highlights: ["Auto GST calculation", "Agency commission ledger"]
   },
   {
     id: "home-collection",
@@ -96,10 +96,10 @@ export const platformFeatures = [
     gradient: "from-violet-500/5 via-purple-500/5 to-transparent",
     badgeColor: "bg-violet-50 text-violet-700 border-violet-200",
     title: "Inventory Management",
-    desc: "Track reagents, automate stock deductions per test, and receive instant low-stock alerts to never run out of supplies.",
+    desc: "Track reagents, automate stock deductions per test, and monitor batch consumption.",
     microPill: "Per-Test Reagent Deduction",
     highlightStat: "Zero Reagent Wastage",
-    highlights: ["Batch & expiry tracking", "Low stock alerts on WhatsApp", "Consumption reports"]
+    highlights: ["Batch & expiry tracking", "Consumption reports"]
   },
   {
     id: "staff-management",
@@ -110,10 +110,10 @@ export const platformFeatures = [
     gradient: "from-teal-500/5 via-cyan-500/5 to-transparent",
     badgeColor: "bg-teal-50 text-teal-700 border-teal-200",
     title: "Staff Management",
-    desc: "Easily manage technicians, pathologists, and receptionists with strict role-based access control and performance tracking.",
+    desc: "Easily manage technicians, pathologists, and receptionists with strict role-based access control and audit tracking.",
     microPill: "Granular RBAC Security",
     highlightStat: "Digital Signature Locks",
-    highlights: ["Role-based access", "Audit log tracking", "Technician throughput metrics"]
+    highlights: ["Role-based access", "Audit log tracking"]
   },
   {
     id: "dr-agent-referral",
@@ -138,10 +138,10 @@ export const platformFeatures = [
     gradient: "from-amber-500/5 via-yellow-500/5 to-transparent",
     badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
     title: "Finance Management",
-    desc: "Monitor daily revenue, track pending dues, manage lab expenses, and export comprehensive financial reports with one click.",
+    desc: "Monitor daily revenue, track pending dues, manage lab expenses, and export financial reports with one click.",
     microPill: "1-Click P&L Reports",
     highlightStat: "Real-time Cash Register",
-    highlights: ["Cashier day closing", "Pending dues recovery", "Export to Excel / Tally"]
+    highlights: ["Pending dues recovery", "Export to Excel"]
   }
 ];
 

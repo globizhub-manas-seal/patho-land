@@ -190,7 +190,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/#demo" className="hover:text-emerald-400 transition-colors">
+                <a
+                  href={`https://wa.me/918402010207?text=${encodeURIComponent('Hi, I want to book a live demo of Patholab Cloud for my lab.')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 transition-colors"
+                >
                   Book a Demo
                 </a>
               </li>
@@ -202,23 +207,28 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-6 text-sm tracking-wider uppercase">Legal</h4>
             <ul className="space-y-3.5 text-sm">
               <li>
-                <Link href="/terms" className="hover:text-emerald-400 transition-colors">
+                <Link href="/terms-and-conditions" className="hover:text-emerald-400 transition-colors">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-emerald-400 transition-colors">
+                <Link href="/privacy-policy" className="hover:text-emerald-400 transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/refund" className="hover:text-emerald-400 transition-colors">
+                <Link href="/refund-policy" className="hover:text-emerald-400 transition-colors">
                   Refund & Cancellation
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-emerald-400 transition-colors">
+                <Link href="/shipping-policy" className="hover:text-emerald-400 transition-colors">
                   Shipping & Delivery
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-emerald-400 transition-colors">
+                  Contact Us 
                 </Link>
               </li>
             </ul>
@@ -230,13 +240,15 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <span className="text-slate-500">Email:</span>
-                <a href="mailto:support@patholabcloud.com" className="text-slate-300 hover:text-emerald-400 transition-colors">
-                  support@patholabcloud.com
+                <a href="mailto:sales@patholab.cloud" className="text-slate-300 hover:text-emerald-400 transition-colors">
+                  sales@patholab.cloud
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="text-slate-500">Toll-Free:</span>
-                <span className="text-slate-300 font-semibold">1800-123-4567</span>
+                <span className="text-slate-500">Phone:</span>
+                <a href="tel:+918402010207" className="text-slate-300 font-semibold hover:text-emerald-400 transition-colors">
+                  +91 84020 10207
+                </a>
               </li>
               <li className="mt-4 pt-4 border-t border-slate-800">
                 <span className="block text-slate-500 text-xs mb-1 font-semibold uppercase tracking-wider">

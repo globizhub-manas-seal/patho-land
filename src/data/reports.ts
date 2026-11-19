@@ -93,8 +93,7 @@ export const reportsData = {
         isAbnormal: true, 
         flag: 'LOW' 
       }
-    ],
-    deltaNote: 'Previous Hb on 12-Oct-2026 was 13.8 g/dL (Delta check triggered automated pathologist review).'
+    ]
   },
   lipid: {
     id: 'lipid',
@@ -157,8 +156,7 @@ export const reportsData = {
         isAbnormal: true, 
         flag: 'HIGH' 
       }
-    ],
-    deltaNote: 'Lipid panel automated formula verification complete. Low risk cardiac threshold flagged.'
+    ]
   },
   thyroid: {
     id: 'thyroid',
@@ -194,7 +192,6 @@ export const reportsData = {
         isAbnormal: true, 
         flag: 'HIGH' 
       }
-    ],
-    deltaNote: 'Immunoassay calibrated against WHO Reference Standard 80/558. High TSH panic value auto-sent via SMS.'
+    ]
   }
 };

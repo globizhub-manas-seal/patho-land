@@ -255,14 +255,6 @@ export default function ReportViewer() {
                   </tbody>
                 </table>
               </div>
-
-              {/* Automated Delta Check Note */}
-              <div className="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                <span>
-                  <strong>Automated Quality Control:</strong> {currentReport.deltaNote}
-                </span>
-              </div>
             </div>
 
             {/* Digital Doctor Signatures */}

@@ -7,7 +7,7 @@ export const brandConfig = {
   // Product Name & Tagline beside the logo:
   brandName: "patholab",
   brandHighlight: ".cloud",
-  tagline: "LIMS Technologies",
+  tagline: "Pay-as-you-go",
   logoAlt: "patholab.cloud logo",
 
   // 1. ISO Certification Logos:
@@ -20,18 +20,18 @@ export const brandConfig = {
 
   // Social Media Profile Links:
   socialLinks: {
-    linkedin: "https://linkedin.com",
+    linkedin: "https://www.linkedin.com/company/globizhub-india",
     twitter: "https://twitter.com",
     facebook: "https://facebook.com",
     instagram: "https://instagram.com",
-    youtube: "https://youtube.com",
+    youtube: "https://www.youtube.com/@globizhubofficial",
   },
 
   // Contact & Quick Conversion (WhatsApp & Phone):
   contact: {
-    phone: "1800-123-4567",
-    whatsappNumber: "919876543210", // Replace with your WhatsApp Business number
-    whatsappMessage: "Hi, I want a live demo and sample reports of Patholab Cloud for my lab.",
-    supportEmail: "support@patholabcloud.com",
+    phone: "+91 84020 10207",
+    whatsappNumber: "918402010207",
+    whatsappMessage: "Hi, I want to book a live demo of Patholab Cloud for my lab.",
+    supportEmail: "support@patholab.cloud",
   },
 };
