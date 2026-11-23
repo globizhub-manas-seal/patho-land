@@ -1,79 +1,171 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
-import { Microscope, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Microscope, CheckCircle2, Cloud, FileText, ArrowRight, Activity, Cpu } from 'lucide-react';
+import Eyebrow from './ui/Eyebrow';
+import CountUp from './ui/CountUp';
 
 export default function IoTIntegration() {
   const highlights = [
-    'Zero Manual Data Entry Errors',
-    'Bidirectional & Unidirectional Interfacing',
-    'Real-time Result Ingestion (Under 2 Seconds)',
-    'Over 500+ Biochemistry, Hematology & Immunoassay Analyzers'
+    'Zero manual data entry errors from human transcription',
+    'Bidirectional & unidirectional RS232 / TCP-IP interfacing',
+    'Real-time automated result ingestion in under 2 seconds',
+    'Pre-configured drivers for 500+ biochemistry & hematology analyzers',
   ];
 
   return (
-    <section id="integration" className="py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#0B1120] rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row shadow-2xl relative border border-slate-800 reveal">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 blur-[100px] rounded-full pointer-events-none"></div>
+    <section id="integration" className="py-20 lg:py-28 bg-ink text-paper relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        {/* Top Header */}
+        <div className="max-w-3xl mb-14 text-left">
+          <Eyebrow variant="dark" icon={Microscope} className="mb-4">
+            Machine Interfacing Engine
+          </Eyebrow>
 
-          {/* Left Column */}
-          <div className="lg:w-1/2 p-8 sm:p-12 lg:p-16 relative z-10 flex flex-col justify-center reveal-left">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-900/50 text-emerald-400 font-medium text-sm mb-6 border border-emerald-800/50 w-fit">
-              <Microscope className="w-4 h-4" /> Seamless Interfacing
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-paper leading-[1.3] sm:leading-[1.35] tracking-tight mb-5">
+            Automate Your Lab with Direct{' '}
+            <span className="text-saffron font-extrabold inline-block">
+              IoT Machine Interfacing
+            </span>
+          </h2>
+
+          <p className="text-sage text-base sm:text-lg leading-relaxed max-w-2xl">
+            Eliminate manual entry errors. Connect over{' '}
+            <strong className="text-paper font-semibold">
+              <CountUp value={500} suffix="+" /> analyzers
+            </strong>{' '}
+            directly to the cloud. Results flow straight from the machine sensor into the validated patient report instantly.
+          </p>
+        </div>
+
+        {/* SVG Line Diagram: Analyzers -> Cloud -> Report */}
+        <div className="bg-ink-soft/70 border border-accent/30 rounded-card-lg p-6 sm:p-10 mb-14 shadow-lift">
+          <div className="text-xs uppercase tracking-widest font-semibold text-sage mb-6">
+            Live Clinical Data Flow Architecture
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative items-center">
+            {/* Step 1: Physical Analyzers */}
+            <div className="bg-ink border border-accent/40 rounded-card p-5 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-sage/10 border border-accent/40 flex items-center justify-center mb-3">
+                <Cpu className="w-6 h-6 text-saffron" />
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-paper mb-1">
+                1. Lab Analyzers
+              </h3>
+              <p className="text-xs text-sage leading-relaxed">
+                Biochemistry, Hematology, Immunoassay, Electrolyte instruments.
+              </p>
+              <div className="mt-3 text-[11px] font-mono text-saffron bg-ink-soft px-2.5 py-1 rounded-full border border-saffron/20">
+                ASTM / HL7 Protocol
+              </div>
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              Automate Your Lab with <span className="text-emerald-400">IoT Machine Integration.</span>
-            </h2>
+            {/* Step 2: Patholab Cloud Engine */}
+            <div className="bg-ink border border-saffron/40 rounded-card p-5 text-center flex flex-col items-center shadow-md relative">
+              <div className="w-12 h-12 rounded-xl bg-saffron/15 border border-saffron/40 flex items-center justify-center mb-3">
+                <Cloud className="w-6 h-6 text-saffron" />
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-paper mb-1">
+                2. Patholab Cloud
+              </h3>
+              <p className="text-xs text-sage leading-relaxed">
+                Direct IoT bridge parses raw machine frames into structured test parameters.
+              </p>
+              <div className="mt-3 text-[11px] font-mono text-sage bg-ink-soft px-2.5 py-1 rounded-full border border-accent/30">
+                &lt; 2 Sec Ingestion
+              </div>
+            </div>
 
-            <p className="text-slate-300 text-base md:text-lg mb-8 leading-relaxed">
-              Eliminate manual entry errors. Connect over 500+ analyzers directly to the cloud. Results flow straight from the machine to the validated patient report instantly.
-            </p>
+            {/* Step 3: Verified NABL Report */}
+            <div className="bg-ink border border-accent/40 rounded-card p-5 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-sage/10 border border-accent/40 flex items-center justify-center mb-3">
+                <FileText className="w-6 h-6 text-saffron" />
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-paper mb-1">
+                3. Validated Report
+              </h3>
+              <p className="text-xs text-sage leading-relaxed">
+                Abnormal values auto-flagged. Pathologist reviews and signs digitally.
+              </p>
+              <div className="mt-3 text-[11px] font-mono text-sage bg-ink-soft px-2.5 py-1 rounded-full border border-accent/30">
+                Auto-Dispatched on WhatsApp
+              </div>
+            </div>
+          </div>
 
-            <ul className="space-y-4 mb-10">
+          {/* SVG Animated Connector Line for Desktop */}
+          <div className="hidden md:block mt-8">
+            <svg className="w-full h-8" viewBox="0 0 800 24" fill="none">
+              <line
+                x1="130"
+                y1="12"
+                x2="670"
+                y2="12"
+                stroke="#1F7A6D"
+                strokeWidth="2"
+                strokeDasharray="6 6"
+              />
+              <circle cx="130" cy="12" r="4" fill="#F2A33A" />
+              <circle cx="400" cy="12" r="5" fill="#F2A33A" />
+              <circle cx="670" cy="12" r="4" fill="#F2A33A" />
+            </svg>
+          </div>
+        </div>
+
+        {/* 2-Column Split: Highlights + Machine Mockup */}
+        <div className="grid lg:grid-cols-12 gap-10 items-center">
+          <div className="lg:col-span-6 space-y-4">
+            <ul className="space-y-3.5">
               {highlights.map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-slate-200 font-medium">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-sage">
+                  <CheckCircle2 className="w-5 h-5 text-saffron flex-shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
 
-            <div>
+            <div className="pt-6">
               <a
-                href="/#demo"
-                className="inline-flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-3.5 rounded-full font-bold transition-all shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 cursor-pointer"
+                href="#demo"
+                className="inline-flex items-center gap-2 bg-saffron hover:bg-saffron-hover text-ink font-bold px-7 py-3.5 rounded-full text-sm transition-all shadow-subtle active:scale-[0.98]"
               >
-                View 500+ Supported Machines
+                <span>View 500+ Supported Analyzers</span>
+                <ArrowRight className="w-4 h-4" />
               </a>
             </div>
           </div>
 
-          {/* Right Column: Real Software Command Center Showcase */}
-          <div className="lg:w-1/2 p-4 sm:p-6 lg:p-8 flex items-center justify-center relative reveal-scale delay-200">
-            <div className="relative w-full rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl border border-slate-700/80 bg-slate-900 group hover:border-emerald-500/60 transition-all duration-500">
-              <Image
-                src="/images/iot-mockup-frame.png"
-                alt="Patholab Cloud Machine Integration Command Center"
-                width={1280}
-                height={720}
-                className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
-              
-              {/* Live Status Overlay Bar */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 bg-slate-900/95 backdrop-blur-md px-4 py-2.5 rounded-xl border border-slate-700/80 text-xs text-slate-300 flex items-center justify-between shadow-lg">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="font-semibold text-white">Live Ingestion Active</span>
+          {/* Real Software Command Center Frame */}
+          <div className="lg:col-span-6">
+            <div className="rounded-card bg-ink-soft border border-accent/40 p-2 shadow-lift overflow-hidden">
+              <div className="relative rounded-lg overflow-hidden border border-accent/30 bg-ink">
+                <Image
+                  src="/images/iot-mockup-frame.png"
+                  alt="Patholab Cloud Machine Integration Command Center"
+                  width={1280}
+                  height={720}
+                  className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity"
+                />
+                
+                {/* Live Status Overlay Bar */}
+                <div className="absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-3 bg-ink/95 border border-accent/50 px-3.5 py-2 rounded-lg text-xs text-paper flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-saffron animate-pulse" />
+                    <span className="font-semibold text-paper">Live Ingestion Active</span>
+                  </div>
+                  <span className="text-[11px] text-sage font-mono bg-ink-soft px-2 py-0.5 rounded border border-accent/30">
+                    ASTM & HL7 Connected
+                  </span>
                 </div>
-                <span className="text-[11px] text-emerald-400 font-semibold bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded-full">
-                  ASTM & HL7 Connected
-                </span>
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

@@ -1,50 +1,81 @@
+'use client';
+
 import React from 'react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { comparisonData } from '../data/features';
+import Eyebrow from './ui/Eyebrow';
 
 export default function ComparisonTable() {
   return (
-    <section id="comparison" className="py-24 bg-slate-50">
+    <section id="comparison" className="py-20 lg:py-28 bg-paper border-b border-borderSubtle">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 reveal">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-200/60 text-slate-700 text-xs font-semibold mb-3">
-            Clear Breakdown
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1120] mb-4">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <Eyebrow variant="sage" className="mb-3">
+            Financial & Operational Comparison
+          </Eyebrow>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-ink tracking-tight mb-4">
             Why Pay Huge Annual Software Fees?
           </h2>
-          <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+          <p className="text-bodyText text-base sm:text-lg">
             See how Patholab Cloud stacks up against legacy desktop solutions and expensive local installations.
           </p>
         </div>
 
-        <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden reveal-scale delay-150">
+        {/* Comparison Table */}
+        <div className="bg-white rounded-card-lg border border-borderSubtle shadow-subtle overflow-hidden">
           {/* Table Header */}
-          <div className="grid grid-cols-3 bg-slate-50/80 border-b border-slate-200 p-6 text-sm md:text-base">
-            <div className="font-bold text-slate-800">Key Features</div>
-            <div className="font-bold text-slate-500 text-center">Traditional Software</div>
-            <div className="font-bold text-emerald-600 text-center">Patholab Cloud</div>
+          <div className="grid grid-cols-12 border-b border-borderSubtle bg-paper-alt/60 text-xs sm:text-sm font-semibold">
+            <div className="col-span-5 sm:col-span-4 p-4 sm:p-5 text-ink uppercase tracking-wider">
+              Key Capability
+            </div>
+            <div className="col-span-3 sm:col-span-4 p-4 sm:p-5 text-mutedText text-center uppercase tracking-wider">
+              Traditional Software
+            </div>
+            {/* Highlighted Patholab Column Header */}
+            <div className="col-span-4 sm:col-span-4 p-4 sm:p-5 text-ink text-center uppercase tracking-wider bg-sage/50 border-t-4 border-saffron font-bold">
+              Patholab Cloud
+            </div>
           </div>
 
           {/* Table Rows */}
           {comparisonData.map((row, i) => (
             <div
               key={i}
-              className="grid grid-cols-3 p-6 border-b border-slate-100 last:border-0 hover:bg-slate-50/60 transition-colors items-center text-sm md:text-base"
+              className="grid grid-cols-12 border-b border-borderSubtle last:border-0 items-center text-xs sm:text-sm transition-colors hover:bg-paper/40"
             >
-              <div className="font-medium text-slate-700">{row.f}</div>
-              <div className="text-slate-500 text-center flex items-center justify-center gap-1.5">
-                <span className="hidden sm:inline text-xs text-rose-500">
-                  <XCircle className="w-4 h-4 inline mr-1 text-rose-400" />
-                </span>
-                <span>{row.t}</span>
+              {/* Feature Title */}
+              <div className="col-span-5 sm:col-span-4 p-4 sm:p-5 font-medium text-ink">
+                {row.f}
               </div>
-              <div className="font-bold text-emerald-600 text-center flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-5 h-5 hidden md:block text-emerald-500 flex-shrink-0" />
-                <span>{row.p}</span>
+
+              {/* Traditional (Negative / Brick Accent) */}
+              <div className="col-span-3 sm:col-span-4 p-4 sm:p-5 text-mutedText text-center flex items-center justify-center gap-1.5 bg-paper-alt/20">
+                <XCircle className="w-4 h-4 text-brick flex-shrink-0 hidden sm:inline" />
+                <span className="text-brick font-medium">{row.t}</span>
+              </div>
+
+              {/* Patholab Cloud (Positive / Accent & Sage Background) */}
+              <div className="col-span-4 sm:col-span-4 p-4 sm:p-5 text-ink text-center flex items-center justify-center gap-2 bg-sage/40 font-semibold">
+                <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0 hidden sm:inline" />
+                <span className="text-ink">{row.p}</span>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Bottom Editorial Callout */}
+        <div className="mt-8 p-4 rounded-card bg-paper-alt border border-borderSubtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-bodyText">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-accent" />
+            <span>No annual maintenance charge (AMC), hidden installation fees, or version upgrade costs.</span>
+          </div>
+          <a
+            href="https://app.patholab.cloud/register"
+            className="text-accent font-semibold hover:underline whitespace-nowrap"
+          >
+            Start with ₹0 Setup →
+          </a>
         </div>
       </div>
     </section>

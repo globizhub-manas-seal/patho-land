@@ -17,8 +17,8 @@ import StickyMobileBar from '../components/StickyMobileBar';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col selection:bg-emerald-200 selection:text-emerald-900">
-      {/* 1. Sticky Navigation */}
+    <div className="min-h-screen bg-paper text-bodyText flex flex-col selection:bg-sage selection:text-ink">
+      {/* 1. Sticky Navigation with Saffron Scroll Progress Bar */}
       <Navbar />
 
       <main className="flex-grow">
@@ -31,19 +31,19 @@ export default function Home() {
         {/* 4. Video Showcase */}
         <VideoAd />
 
-        {/* 5. Value Propositions */}
+        {/* 5. Value Propositions (0 Server / 0 Setup / 0 IT) */}
         <ValueProps />
 
-        {/* 6. Legacy vs Cloud Comparison */}
+        {/* 6. Legacy vs Cloud Comparison Table */}
         <ComparisonTable />
 
-        {/* 7. IoT Machine Interfacing */}
+        {/* 7. IoT Machine Interfacing (The One Allowed Dark Section in #0F3D3E) */}
         <IoTIntegration />
 
         {/* 8. Live Interactive NABL Sample Report Viewer */}
         <ReportViewer />
 
-        {/* 9. Bento Grid Ecosystem */}
+        {/* 9. Bento Grid Ecosystem (8 Modules in unified Teal/Sage accent) */}
         <EcosystemGrid />
 
         {/* 10. Spotlight Client Story */}
@@ -52,10 +52,10 @@ export default function Home() {
         {/* 11. Customer Testimonials */}
         <Testimonials />
 
-        {/* 12. Bank-Grade Security */}
+        {/* 12. Bank-Grade ISO Security */}
         <Security />
 
-        {/* 13. Interactive FAQ */}
+        {/* 13. Interactive FAQ Accordion */}
         <Faq />
 
         {/* 14. Pre-Footer Call to Action */}

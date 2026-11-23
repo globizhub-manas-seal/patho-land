@@ -7,7 +7,8 @@ export const brandConfig = {
   // Product Name & Tagline beside the logo:
   brandName: "patholab",
   brandHighlight: ".cloud",
-  tagline: "Pay-as-you-go",
+  highlightColor: "#01A9B4", // Exact cyan from logo for .cloud
+  tagline: "Pay-As-You-Go LIMS",
   logoAlt: "patholab.cloud logo",
 
   // 1. ISO Certification Logos:

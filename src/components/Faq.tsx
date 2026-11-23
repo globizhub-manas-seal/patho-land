@@ -1,62 +1,60 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { faqs } from '../data/faqs';
+import Eyebrow from './ui/Eyebrow';
 
 export default function Faq() {
-  const [activeFaq, setActiveFaq] = useState(0);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
-  const toggleFaq = (index) => {
+  const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section id="faq" className="py-20 lg:py-28 bg-paper border-b border-borderSubtle">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12 reveal">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold mb-3">
+        <div className="text-center mb-12">
+          <Eyebrow variant="sage" className="mb-3">
             Got Questions?
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0B1120] mb-4">
+          </Eyebrow>
+          <h2 className="font-serif text-3xl sm:text-4xl font-semibold text-ink tracking-tight mb-3">
             Frequently Asked Questions
           </h2>
-          <p className="text-slate-600">
+          <p className="text-bodyText text-base sm:text-lg">
             Everything you need to know about migrating and scaling with Patholab Cloud.
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3.5">
           {faqs.map((faq, i) => {
             const isOpen = activeFaq === i;
             return (
               <div
                 key={i}
-                className={`border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-slate-300 shadow-sm reveal ${
-                  i === 0 ? 'delay-100' : i === 1 ? 'delay-150' : i === 2 ? 'delay-200' : 'delay-250'
-                }`}
+                className="border border-borderSubtle rounded-card bg-white overflow-hidden transition-all duration-200 hover:border-accent/40 shadow-subtle"
               >
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
-                  className="w-full text-left px-6 py-5 flex items-center justify-between bg-slate-50/50 hover:bg-slate-50 transition-colors focus:outline-none"
+                  className="w-full text-left px-6 py-4 sm:py-5 flex items-center justify-between bg-white hover:bg-paper-alt/30 transition-colors focus:outline-none"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-semibold text-slate-800 pr-4 text-base md:text-lg">
+                  <span className="font-serif font-semibold text-ink pr-4 text-base sm:text-lg">
                     {faq.q}
                   </span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0 ${
-                      isOpen ? 'rotate-180 text-emerald-600' : ''
-                    }`}
-                  />
+                  <div className="w-7 h-7 rounded-full bg-paper-alt flex items-center justify-center flex-shrink-0 text-ink">
+                    {isOpen ? <Minus className="w-4 h-4 text-accent" /> : <Plus className="w-4 h-4" />}
+                  </div>
                 </button>
+
                 <div
-                  className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
-                    isOpen ? 'max-h-60 py-5 bg-white border-t border-slate-100' : 'max-h-0'
+                  className={`px-6 overflow-hidden transition-all duration-300 ease-out ${
+                    isOpen ? 'max-h-80 py-4 bg-paper/30 border-t border-borderSubtle/60' : 'max-h-0'
                   }`}
                 >
-                  <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                  <p className="text-bodyText leading-relaxed text-sm sm:text-base">
                     {faq.a}
                   </p>
                 </div>

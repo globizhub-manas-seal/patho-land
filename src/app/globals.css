@@ -1,144 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-paper: #F7F4EC;
+  --bg-paper-alt: #EFEADD;
+  --color-ink: #0F3D3E;
+  --color-accent: #1F7A6D;
+  --color-saffron: #F2A33A;
+  --color-sage: #DCE8DF;
+  --color-brick: #B5503C;
+  --color-body: #3B4A48;
+  --color-muted: #6B7A77;
+  --color-border: #E3DDCC;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    background-color: #F7F4EC;
+    color: #3B4A48;
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  body {
+    background-color: #F7F4EC;
+    color: #3B4A48;
+    font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
-/* Custom subtle scrollbar */
+/* Editorial Highlights & Markers */
+.marker-sage {
+  background: linear-gradient(transparent 62%, #DCE8DF 62%);
+  display: inline;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.marker-saffron {
+  background: linear-gradient(transparent 62%, rgba(242, 163, 58, 0.35) 62%);
+  display: inline;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.editorial-underline {
+  text-decoration: underline;
+  text-decoration-color: #1F7A6D;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+
+.editorial-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E3DDCC;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(15, 61, 62, 0.04);
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #F7F4EC;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #C2D6C7;
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #1F7A6D;
 }
 
-/* Smooth Scroll Reveal Animations with Progressive Enhancement
- * Default: 100% visible (prevents blank screen on slow/disabled JS or hydration failure)
- * Animated: Only when html has .anim-ready class (injected after verifying IntersectionObserver)
- */
-.reveal,
-.reveal-scale,
-.reveal-left,
-.reveal-right {
-  opacity: 1;
-  transform: none;
-}
-
-html.anim-ready .reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-html.anim-ready .reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-html.anim-ready .reveal-scale {
-  opacity: 0;
-  transform: scale(0.96) translateY(24px);
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-html.anim-ready .reveal-scale.revealed {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-html.anim-ready .reveal-left {
-  opacity: 0;
-  transform: translateX(-32px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-html.anim-ready .reveal-left.revealed {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-html.anim-ready .reveal-right {
-  opacity: 0;
-  transform: translateX(32px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-
-html.anim-ready .reveal-right.revealed {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Stagger Delays */
-.delay-100 { transition-delay: 100ms; }
-.delay-150 { transition-delay: 150ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-250 { transition-delay: 250ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-
+/* Accessibility: prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .reveal, .reveal-scale, .reveal-left, .reveal-right {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
-
-/* Legal Document Prose Typography */
-.legal-prose h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0B1120;
-  margin-top: 1.75rem;
-  margin-bottom: 0.625rem;
-  line-height: 1.35;
-}
-.legal-prose h2:first-child {
-  margin-top: 0;
-}
-.legal-prose p {
-  color: #475569;
-  line-height: 1.75;
-  margin-bottom: 0.875rem;
-}
-.legal-prose ul {
-  list-style-type: disc;
-  padding-left: 1.25rem;
-  margin-top: 0.5rem;
-  margin-bottom: 1.25rem;
-  color: #475569;
-}
-.legal-prose li {
-  margin-bottom: 0.375rem;
-  line-height: 1.65;
-}
-.legal-prose strong {
-  color: #0F172A;
-  font-weight: 600;
-}
-.legal-prose a {
-  color: #059669;
-  text-decoration: underline;
-  font-weight: 500;
-  transition: color 0.15s ease;
-}
-.legal-prose a:hover {
-  color: #047857;
-}
-

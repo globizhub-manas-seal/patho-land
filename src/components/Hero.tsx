@@ -1,25 +1,30 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Zap, ArrowRight, Play, Pause, Volume2, VolumeX, CheckCircle2, Maximize2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Play, Volume, Volume1, Volume2, VolumeX, Maximize2, CheckCircle2 } from 'lucide-react';
 import { heroProductVideo } from '../data/productVideo';
+import { brandConfig } from '../data/brand';
+import Eyebrow from './ui/Eyebrow';
+import CountUp from './ui/CountUp';
 
-function getYouTubeInfo(url) {
+function getYouTubeInfo(url: string) {
   if (!url) return null;
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/
+  );
   if (match) {
     return {
       videoId: match[1],
       embedUrl: `https://www.youtube-nocookie.com/embed/${match[1]}?autoplay=1&mute=1&loop=1&rel=0&modestbranding=1`,
-      thumbnailUrl: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`
+      thumbnailUrl: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`,
     };
   }
   return null;
 }
 
-function optimizeVideoUrl(url) {
+function optimizeVideoUrl(url: string) {
   if (!url) return url;
-  // If it's a Cloudinary video URL without transformations, automatically inject q_auto,f_auto,w_1080
   if (url.includes('res.cloudinary.com') && url.includes('/video/upload/') && !url.includes('q_auto')) {
     return url.replace('/video/upload/', '/video/upload/q_auto,f_auto,w_1080/');
   }
@@ -32,12 +37,29 @@ export default function Hero({
   loop = heroProductVideo.loop,
   muted = heroProductVideo.muted,
   posterUrl = heroProductVideo.posterUrl,
-  objectFit = heroProductVideo.objectFit || "contain"
+}: {
+  videoUrl?: string;
+  autoPlay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  posterUrl?: string;
+  objectFit?: string;
 }) {
   const [isPlaying, setIsPlaying] = useState(autoPlay);
-  const [isMuted, setIsMuted] = useState(muted);
+  const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(0.6);
+  const [volumeIndicatorVisible, setVolumeIndicatorVisible] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const volumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showVolumeIndicator = () => {
+    setVolumeIndicatorVisible(true);
+    if (volumeTimeoutRef.current) clearTimeout(volumeTimeoutRef.current);
+    volumeTimeoutRef.current = setTimeout(() => {
+      setVolumeIndicatorVisible(false);
+    }, 1500);
+  };
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -45,28 +67,70 @@ export default function Hero({
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch((err) => {
-        console.warn("Video play prevented:", err);
-      });
+      videoRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => console.warn('Video play prevented:', err));
     }
   };
 
-  const toggleMute = (e) => {
+  const toggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
+    if (isMuted) {
+      const restoreVol = volume === 0 ? 0.6 : volume;
+      videoRef.current.muted = false;
+      videoRef.current.volume = restoreVol;
+      setIsMuted(false);
+      setVolume(restoreVol);
+    } else {
+      videoRef.current.muted = true;
+      setIsMuted(true);
+    }
   };
 
-  const toggleFullscreen = (e) => {
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const newVol = parseFloat(e.target.value);
+    if (!videoRef.current) return;
+    videoRef.current.volume = newVol;
+    setVolume(newVol);
+    if (newVol === 0) {
+      videoRef.current.muted = true;
+      setIsMuted(true);
+    } else {
+      videoRef.current.muted = false;
+      setIsMuted(false);
+    }
+  };
+
+  const handleVolumeUp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    const newVol = Math.min(1, Math.round((volume + 0.1) * 100) / 100);
+    videoRef.current.volume = newVol;
+    videoRef.current.muted = false;
+    setVolume(newVol);
+    setIsMuted(false);
+  };
+
+  const handleVolumeDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    const newVol = Math.max(0, Math.round((volume - 0.1) * 100) / 100);
+    videoRef.current.volume = newVol;
+    setVolume(newVol);
+    if (newVol === 0) {
+      videoRef.current.muted = true;
+      setIsMuted(true);
+    }
+  };
+
+  const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!videoRef.current) return;
     if (videoRef.current.requestFullscreen) {
       videoRef.current.requestFullscreen();
-    } else if (videoRef.current.webkitRequestFullscreen) {
-      videoRef.current.webkitRequestFullscreen();
     }
   };
 
@@ -75,255 +139,322 @@ export default function Hero({
   const isIframeEmbed = Boolean(
     isYouTube || (videoUrl && (videoUrl.includes('player.cloudinary.com') || videoUrl.includes('vimeo.com')))
   );
-  const effectiveIframeSrc = isYouTube ? youtubeInfo.embedUrl : videoUrl;
+  const effectiveIframeSrc = isYouTube ? youtubeInfo?.embedUrl : videoUrl;
   const effectiveDirectVideoSrc = optimizeVideoUrl(videoUrl);
-
   const hasVideo = Boolean(videoUrl && !videoError);
 
+  const whatsappDemoUrl = `https://wa.me/${brandConfig.contact.whatsappNumber}?text=${encodeURIComponent(
+    brandConfig.contact.whatsappMessage
+  )}`;
+
+  // Stagger animation container
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 18 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  };
+
   return (
-    <section className="relative pt-32 pb-20 lg:pt-44 lg:pb-32 overflow-hidden">
-      {/* Abstract Background Gradient Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[650px] opacity-25 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-300 to-blue-500 blur-[120px] rounded-full mix-blend-multiply"></div>
-      </div>
+    <section className="relative pt-28 pb-16 lg:pt-36 lg:pb-24 bg-paper overflow-hidden border-b border-borderSubtle">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-12 xl:gap-16">
+          
+          {/* Left Column: Editorial Headline & Copy */}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex-1 max-w-2xl text-left"
+          >
+            {/* Eyebrow Label with Warm Orange Highlight Badge */}
+            <motion.div variants={itemVariants} className="mb-5">
+              <Eyebrow variant="orange">
+                India&apos;s First Pay-As-You-Go LIMS • ₹2.5 / Patient
+              </Eyebrow>
+            </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-14 items-center">
-
-          {/* Left: Content (5 of 12 columns for balanced text + large video) */}
-          <div className="lg:col-span-5 text-center lg:text-left mb-14 lg:mb-0">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100/90 text-emerald-800 font-semibold text-xs sm:text-sm mb-6 border border-emerald-200 shadow-sm">
-              <Zap className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span>India&apos;s First Pay-As-You-Go LIMS • Just ₹2.5 / Patient</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-[3.4rem] font-extrabold text-[#0B1120] leading-[1.12] tracking-tight mb-6">
-              Stop Paying <br className="hidden lg:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">
-                ₹20,000 - ₹1L
-              </span>
-              <br />
+            {/* Editorial Heading with Soft Cyan Highlight Badge matching .cloud */}
+            <motion.h1
+              variants={itemVariants}
+              className="text-3xl sm:text-4xl lg:text-[2.85rem] xl:text-[3.15rem] font-bold text-ink leading-[1.32] sm:leading-[1.38] tracking-tight mb-6"
+            >
+              Stop Paying <br />
+              <span className="inline-block bg-[#01A9B4]/15 border border-[#01A9B4]/30 px-3.5 py-1 rounded-xl text-[#01A9B4] whitespace-nowrap shadow-sm my-1.5 sm:my-2">
+                ₹20,000 – ₹1 Lakh
+              </span> <br />
               Every Year for Lab Software.
-            </h1>
+            </motion.h1>
 
-            <p className="text-base sm:text-lg text-slate-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Transform your diagnostic lab with India&apos;s first 100% <strong className="text-slate-900 font-bold"> Pay-As-You-Go </strong> cloud ecosystem at just <strong className="text-slate-900 font-bold">₹2.5 per patient registration</strong>. Zero server costs, zero maintenance, and infinite scalability across all your collection centers.
-            </p>
+            {/* Subtitle */}
+            <motion.p
+              variants={itemVariants}
+              className="text-base sm:text-lg text-bodyText mb-7 max-w-xl leading-relaxed"
+            >
+              Transform your diagnostic lab with India&apos;s first 100%{' '}
+              <strong className="text-ink font-semibold">Pay-As-You-Go</strong> cloud
+              ecosystem at just{' '}
+              <strong className="text-ink font-semibold">₹2.5 per patient registration</strong>.
+              Zero server costs, zero annual maintenance, and seamless syncing across every
+              collection center.
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            {/* Stat Card: Big Numeral ₹2.5 */}
+            <motion.div
+              variants={itemVariants}
+              className="bg-white border border-borderSubtle rounded-card p-4 sm:p-5 mb-7 flex items-center gap-4 sm:gap-6 shadow-subtle max-w-lg"
+            >
+              <div className="flex-shrink-0">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-ink tracking-tight">
+                  <CountUp value={2.5} decimals={1} prefix="₹" />
+                </span>
+                <span className="text-xs text-mutedText font-medium block mt-0.5">
+                  / patient registration
+                </span>
+              </div>
+              <div className="h-10 w-px bg-borderSubtle" />
+              <div className="text-xs sm:text-sm text-bodyText leading-snug">
+                <span className="font-semibold text-ink block">
+                  India&apos;s First Pay-As-You-Go Model
+                </span>
+                No lock-ins, no upfront server purchases. Pay only when you register patients.
+              </div>
+            </motion.div>
+
+            {/* CTA Buttons in a single line on sm+ */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5"
+            >
               <a
                 href="https://app.patholab.cloud/register"
-                className="group bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-bold text-base md:text-lg transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40 hover:-translate-y-1 flex items-center justify-center gap-2"
+                className="group bg-saffron hover:bg-saffron-hover text-ink px-6 py-3.5 sm:px-7 sm:py-4 rounded-full font-bold text-sm sm:text-base whitespace-nowrap transition-all duration-200 shadow-sm hover:shadow flex items-center justify-center gap-2 active:scale-[0.98]"
               >
-                Create Account (₹0 setup)
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
+                <span>Create Account (₹0 setup)</span>
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 group-hover:translate-x-1 flex-shrink-0" />
               </a>
+
               <a
-                href={`https://wa.me/918402010207?text=${encodeURIComponent('Hi, I want to book a live demo of Patholab Cloud for my lab.')}`}
+                href={whatsappDemoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white hover:bg-slate-50 text-[#0B1120] border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center gap-2 hover:border-slate-300 shadow-sm"
+                className="bg-white hover:bg-paper-alt text-ink border border-borderSubtle px-6 py-3.5 sm:px-7 sm:py-4 rounded-full font-semibold text-sm sm:text-base whitespace-nowrap transition-all flex items-center justify-center gap-2 shadow-subtle active:scale-[0.98]"
               >
-                <Play className="w-5 h-5 fill-slate-800" /> Book a Demo
+                <Play className="w-4 h-4 fill-ink flex-shrink-0" />
+                <span>Book a Demo</span>
               </a>
-            </div>
+            </motion.div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-5 text-sm font-medium text-slate-500">
-              <span className="flex items-center gap-1.5 text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/70">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" /> ₹2.5 / Patient Registration
+            {/* Trust Micro-Bullets */}
+            <motion.div
+              variants={itemVariants}
+              className="mt-7 flex flex-wrap items-center gap-3 text-xs sm:text-sm text-mutedText"
+            >
+              <span className="flex items-center gap-1.5 text-ink font-medium bg-sage/60 px-3 py-1 rounded-full border border-borderSubtle">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                ₹2.5 / Patient Registration
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Unlimited Branches
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                Unlimited Collection Centers
               </span>
               <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Zero AMC Forever
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                Zero AMC Forever
               </span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {/* Right: Enlarged & Rounded Product Video Window (7 of 12 columns) */}
-          <div className="lg:col-span-7 relative">
-            <div className="relative rounded-3xl lg:rounded-[2.5rem] bg-white border border-slate-200/90 shadow-2xl shadow-slate-300/40 overflow-hidden transition-all duration-500 hover:shadow-emerald-500/10">
+          {/* Right Column: Realistic Smartphone Device with Titanium Chassis & Floating Controls */}
+          <motion.div
+            initial={{ opacity: 0, rotate: -1.2, y: 24 }}
+            animate={{ opacity: 1, rotate: 0, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+            className="w-full max-w-[290px] sm:max-w-[320px] lg:max-w-[330px] xl:max-w-[350px] flex-shrink-0 flex flex-col items-center"
+          >
+            {/* Realistic Smartphone Chassis with Warm Titanium Edge & Interactive Hardware Buttons */}
+            <div className="relative w-full rounded-[48px] sm:rounded-[52px] bg-gradient-to-b from-[#F2994A] via-[#E27A26] to-[#C96E15] p-[3px] sm:p-[3.5px] shadow-[0_20px_50px_rgba(201,110,21,0.22),0_10px_20px_rgba(0,0,0,0.08)]">
+              
+              {/* Left Hardware Buttons (Interactive Volume Up & Down) */}
+              <button
+                type="button"
+                onClick={handleVolumeUp}
+                className="absolute -left-[5px] top-24 w-[3.5px] h-9 bg-[#C96E15] hover:bg-saffron active:scale-95 rounded-l-md shadow-sm z-50 cursor-pointer transition-colors"
+                title="Volume Up (+)"
+                aria-label="Volume Up"
+              />
+              <button
+                type="button"
+                onClick={handleVolumeDown}
+                className="absolute -left-[5px] top-36 w-[3.5px] h-9 bg-[#C96E15] hover:bg-saffron active:scale-95 rounded-l-md shadow-sm z-50 cursor-pointer transition-colors"
+                title="Volume Down (-)"
+                aria-label="Volume Down"
+              />
 
-              {/* Mac OS Window Header */}
-              <div className="h-11 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between px-5">
-                <div className="flex items-center gap-2">
-                  <div className="w-3.5 h-3.5 rounded-full bg-red-400/90 hover:opacity-80 transition-opacity"></div>
-                  <div className="w-3.5 h-3.5 rounded-full bg-amber-400/90 hover:opacity-80 transition-opacity"></div>
-                  <div className="w-3.5 h-3.5 rounded-full bg-emerald-400/90 hover:opacity-80 transition-opacity"></div>
-                  <span className="text-xs text-slate-500 font-medium ml-3">
-                    {heroProductVideo.browserUrl}
-                  </span>
-                </div>
+              {/* Right Hardware Button (Power / Play-Pause) */}
+              <button
+                type="button"
+                onClick={togglePlay}
+                className="absolute -right-[5px] top-28 w-[3.5px] h-12 bg-[#C96E15] hover:bg-saffron active:scale-95 rounded-r-md shadow-sm z-50 cursor-pointer transition-colors"
+                title="Power / Play"
+                aria-label="Power Button"
+              />
 
-                {/* Video Quick Controls (Sound + Fullscreen) */}
-                {hasVideo && !isIframeEmbed && (
-                  <div className="flex items-center gap-1">
+              {/* Inner Black Bezel */}
+              <div className="relative w-full rounded-[45px] sm:rounded-[49px] bg-black p-[7px] sm:p-[8px]">
+                {/* Screen Display Container (Vertical Aspect Ratio) */}
+                <div className="relative w-full aspect-[9/18.5] rounded-[38px] sm:rounded-[42px] overflow-hidden bg-black flex items-center justify-center">
+                  
+                  {/* Top Left: Full Screen Button */}
+                  {hasVideo && !isIframeEmbed && (
                     <button
-                      onClick={toggleMute}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors"
-                      title={isMuted ? "Unmute sound" : "Mute sound"}
-                      aria-label="Toggle mute"
-                    >
-                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-emerald-600" />}
-                    </button>
-                    <button
+                      type="button"
                       onClick={toggleFullscreen}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition-colors"
+                      className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 z-40 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/85 hover:bg-white text-ink shadow-md border border-black/10 backdrop-blur-md flex items-center justify-center transition-all active:scale-90"
                       title="Fullscreen"
                       aria-label="Fullscreen"
                     >
                       <Maximize2 className="w-3.5 h-3.5" />
                     </button>
-                  </div>
-                )}
-              </div>
+                  )}
 
-              {/* Video Player Frame with 100% Visibility (object-contain) and Expanded Height */}
-              <div className="relative w-full aspect-video min-h-[340px] sm:min-h-[420px] lg:min-h-[460px] bg-black flex items-center justify-center overflow-hidden">
-                {hasVideo ? (
-                  isIframeEmbed ? (
-                    <iframe
-                      src={effectiveIframeSrc}
-                      className="w-full h-full border-0"
-                      allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <div
-                      className="relative w-full h-full flex items-center justify-center group"
-                      onClick={togglePlay}
-                      role="button"
-                      tabIndex={0}
-                      aria-label={isPlaying ? "Pause video" : "Play video"}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          togglePlay();
-                        }
-                      }}
-                    >
-                      <video
-                        ref={videoRef}
-                        src={effectiveDirectVideoSrc}
-                        poster={posterUrl || undefined}
-                        autoPlay={autoPlay}
-                        muted={isMuted}
-                        loop={loop}
-                        playsInline
-                        controls={false}
-                        onPlay={() => setIsPlaying(true)}
-                        onPause={() => setIsPlaying(false)}
-                        onError={() => setVideoError(true)}
-                        className={`w-full h-full ${objectFit === 'contain' ? 'object-contain' : 'object-cover'
-                          } cursor-pointer transition-all`}
+                  {/* Top Center: Dynamic Island (Camera cutout - compact so controls have ample space) */}
+                  <div className="absolute top-2.5 left-1/2 -translate-x-1/2 z-40 w-16 sm:w-20 h-4.5 sm:h-5 bg-black rounded-full flex items-center justify-end pr-1.5 shadow-sm pointer-events-none">
+                    {/* Camera Lens Circle */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#151515] ring-1 ring-white/10" />
+                  </div>
+
+                  {/* Top Right: Volume Controls */}
+                  {hasVideo && !isIframeEmbed && (
+                    isMuted ? (
+                      /* When Muted: Single round unmute button */
+                      <button
+                        type="button"
+                        onClick={toggleMute}
+                        className="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-40 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/85 hover:bg-white text-ink shadow-md border border-black/10 backdrop-blur-md flex items-center justify-center transition-all active:scale-90 group"
+                        title="Click to Unmute"
+                        aria-label="Unmute Video"
+                      >
+                        <VolumeX className="w-3.5 h-3.5 text-brick group-hover:scale-110 transition-transform" />
+                      </button>
+                    ) : (
+                      /* When Unmuted: Vertical Volume Control Capsule */
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute top-2.5 sm:top-3 right-2.5 sm:right-3 z-40 flex flex-col items-center gap-1.5 bg-white/95 hover:bg-white backdrop-blur-md p-1.5 rounded-full border border-black/10 shadow-lg transition-all"
+                      >
+                        {/* Mute Button (Click to mute and collapse) */}
+                        <button
+                          type="button"
+                          onClick={toggleMute}
+                          className="w-7 h-7 rounded-full text-ink hover:text-brick hover:bg-black/5 transition-colors flex items-center justify-center flex-shrink-0"
+                          title="Click to Mute"
+                          aria-label="Mute Video"
+                        >
+                          {volume < 0.5 ? (
+                            <Volume1 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                          ) : (
+                            <Volume2 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                          )}
+                        </button>
+
+                        {/* Vertical Range Slider */}
+                        <div className="py-1 flex items-center justify-center h-16 sm:h-20">
+                          <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.02"
+                            value={volume}
+                            onChange={handleSliderChange}
+                            style={{
+                              writingMode: 'vertical-lr',
+                              direction: 'rtl',
+                              WebkitAppearance: 'slider-vertical',
+                            }}
+                            className="h-16 sm:h-20 w-1.5 bg-black/20 rounded-full cursor-pointer accent-accent focus:outline-none"
+                            title={`Volume: ${Math.round(volume * 100)}%`}
+                            aria-label="Vertical Volume Slider"
+                          />
+                        </div>
+
+                        {/* Volume Percentage */}
+                        <span className="text-[9px] font-mono text-ink font-semibold select-none pb-0.5">
+                          {`${Math.round(volume * 100)}%`}
+                        </span>
+                      </div>
+                    )
+                  )}
+
+                  {/* Video Player */}
+                  {hasVideo ? (
+                    isIframeEmbed ? (
+                      <iframe
+                        src={effectiveIframeSrc}
+                        className="w-full h-full border-0"
+                        allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+                        allowFullScreen
                       />
-
-                      {/* Play / Pause Centered Overlay (Visible when paused or on hover) */}
-                      {!isPlaying && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center transition-all cursor-pointer">
-                          <div className="w-18 h-18 sm:w-20 sm:h-20 bg-white/95 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
-                            <Play className="w-8 h-8 text-emerald-600 ml-1 fill-emerald-600" />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Gentle play hint badge when playing */}
-                      {isPlaying && (
-                        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 pointer-events-none">
-                          <Pause className="w-3.5 h-3.5" />
-                          <span>Click to pause</span>
-                        </div>
-                      )}
-                    </div>
-                  )
-                ) : (
-                  /* Fallback Interactive Mockup (Shown if video URL isn't reachable) */
-                  <div className="flex h-full w-full bg-slate-50/50">
-                    <div className="w-48 bg-slate-50 border-r border-slate-100 p-4 hidden sm:block">
-                      <div className="h-7 w-24 bg-emerald-100 rounded-md mb-6 flex items-center px-2">
-                        <span className="text-[10px] font-bold text-emerald-700">CLINICAL LAB</span>
-                      </div>
-                      <div className="space-y-2.5">
-                        {[
-                          { label: "Dashboard", active: true },
-                          { label: "Sample Entry", active: false },
-                          { label: "Analyzers", active: false },
-                          { label: "Reports", active: false },
-                          { label: "Billing & GST", active: false },
-                        ].map((item, i) => (
-                          <div
-                            key={i}
-                            className={`h-7 rounded-lg text-xs font-medium px-2.5 flex items-center ${item.active ? 'bg-emerald-500 text-white font-semibold' : 'bg-slate-100/80 text-slate-500'
-                              }`}
-                          >
-                            {item.label}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex-1 p-6 bg-slate-50/50 flex flex-col justify-between">
-                      <div className="flex justify-between items-center mb-4">
-                        <div>
-                          <div className="text-xs font-bold text-slate-800">Today's Overview</div>
-                          <div className="text-[10px] text-slate-400">142 Samples Processed</div>
-                        </div>
-                        <div className="text-[10px] bg-emerald-500 text-white px-3 py-1 rounded-full font-semibold shadow-sm">
-                          Live Syncing
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-3 mb-4">
-                        <div className="bg-white border border-slate-100 rounded-xl p-3 shadow-sm">
-                          <div className="text-[10px] text-slate-400">Total Patients</div>
-                          <div className="text-sm font-bold text-slate-800 mt-1">1,280</div>
-                          <div className="text-[9px] text-emerald-600 font-medium">+14% today</div>
-                        </div>
-                        <div className="bg-white border border-slate-100 rounded-xl p-3 shadow-sm">
-                          <div className="text-[10px] text-slate-400">IoT Reports</div>
-                          <div className="text-sm font-bold text-slate-800 mt-1">94% Auto</div>
-                          <div className="text-[9px] text-emerald-600 font-medium">Zero Error</div>
-                        </div>
-                        <div className="bg-white border border-slate-100 rounded-xl p-3 shadow-sm">
-                          <div className="text-[10px] text-slate-400">WhatsApp Sent</div>
-                          <div className="text-sm font-bold text-emerald-600 mt-1">100%</div>
-                          <div className="text-[9px] text-slate-500">Delivered</div>
-                        </div>
-                      </div>
-
-                      <div className="bg-white border border-slate-100 rounded-xl shadow-sm p-4 flex-1 flex flex-col justify-between">
-                        <div className="flex justify-between items-center text-[10px] font-semibold text-slate-400 pb-2 border-b border-slate-100">
-                          <span>PATIENT</span>
-                          <span>TEST PROFILE</span>
-                          <span>STATUS</span>
-                        </div>
-                        <div className="space-y-2 mt-1">
-                          {[
-                            { name: "Rahul Verma", test: "Complete Blood Count (CBC)", status: "Approved" },
-                            { name: "Pooja Sharma", test: "Lipid Profile + Thyroid", status: "In IoT Queue" },
-                            { name: "Amit Patel", test: "HbA1c & Fasting Glucose", status: "Dispatched" },
-                          ].map((row, i) => (
-                            <div key={i} className="flex justify-between items-center text-[11px] py-1 border-b border-slate-50 last:border-0">
-                              <span className="font-medium text-slate-700">{row.name}</span>
-                              <span className="text-slate-400 truncate max-w-[140px]">{row.test}</span>
-                              <span className="text-[9px] font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">
-                                {row.status}
-                              </span>
+                    ) : (
+                      <div
+                        className="relative w-full h-full flex items-center justify-center group cursor-pointer"
+                        onClick={togglePlay}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={isPlaying ? 'Pause video' : 'Play video'}
+                      >
+                        <video
+                          ref={videoRef}
+                          src={effectiveDirectVideoSrc}
+                          poster={posterUrl}
+                          autoPlay={autoPlay}
+                          loop={loop}
+                          muted={isMuted}
+                          playsInline
+                          onError={() => setVideoError(true)}
+                          className="w-full h-full object-cover"
+                        />
+                        {!isPlaying && (
+                          <div className="absolute inset-0 bg-ink/30 flex items-center justify-center backdrop-blur-[1px]">
+                            <div className="w-14 h-14 bg-white/95 rounded-full flex items-center justify-center shadow-lift text-ink group-hover:scale-105 transition-transform">
+                              <Play className="w-6 h-6 ml-0.5 fill-ink" />
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                       </div>
+                    )
+                  ) : (
+                    <div className="p-6 text-center text-mutedText text-xs">
+                      Mobile Walkthrough Video
                     </div>
-                  </div>
-                )}
+                  )}
+
+                  {/* Bottom Home Indicator Bar */}
+                  <div className="w-24 sm:w-28 h-1 bg-white/70 rounded-full absolute bottom-2 left-1/2 -translate-x-1/2 z-30 pointer-events-none" />
+                </div>
               </div>
             </div>
 
+            {/* Sub-pill badge below phone */}
+            <div className="mt-4 px-3.5 py-1 rounded-full bg-paper-alt border border-borderSubtle text-[11px] font-medium text-bodyText shadow-sm flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span>Over 100+ diagnostic labs onboarded</span>
+            </div>
+          </motion.div>
 
-
-
-          </div>
         </div>
       </div>
     </section>
