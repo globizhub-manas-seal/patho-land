@@ -1,7 +1,7 @@
 // Configuration for your Cloudinary Hero Product Video
 export const heroProductVideo = {
   // PASTE YOUR CLOUDINARY VIDEO URL HERE (q_auto,f_auto enables dynamic compression & format optimization)
-  videoUrl: "https://res.cloudinary.com/ixpit3cg/video/upload/q_auto,f_auto,w_1080/v1794896633/VID-20261115-WA0001.mp4",
+  videoUrl: "https://res.cloudinary.com/ixpit3cg/video/upload/v1795584932/1_english_ad_standing_-_Audio_Enhanced.mp4",
 
   // Optional poster thumbnail image before video plays
   posterUrl: "",
